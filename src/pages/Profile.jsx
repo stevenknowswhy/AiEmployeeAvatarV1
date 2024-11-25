@@ -97,10 +97,10 @@ const Profile = () => {
 
           {/* Navigation Tabs */}
           <div className={`
-            mt-4 sm:mt-6
+            mt-4 sm:mt-6 pb-2
             ${isMobileMenuOpen ? 'block' : 'hidden sm:block'}
           `}>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-1">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2 sm:gap-4 max-w-2xl mx-auto">
               {[
                 { label: 'Chat', value: 'chat', icon: MessageCircle },
                 { label: 'Knowledge Base', value: 'knowledge', icon: BookOpen },
@@ -115,16 +115,29 @@ const Profile = () => {
                       setIsMobileMenuOpen(false);
                     }}
                     className={`
-                      flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors
+                      group relative flex items-center gap-3 px-6 py-3 rounded-xl transition-all
                       ${activeTab === tab.value 
-                        ? 'bg-white/20 text-white' 
-                        : 'text-white/70 hover:bg-white/10 hover:text-white'}
+                        ? 'bg-white text-blue-600 shadow-lg shadow-black/5' 
+                        : 'text-white/90 hover:bg-white/10'}
                       ${!isMobileMenuOpen && 'sm:flex-1 sm:justify-center'}
-                      my-1 sm:my-0
                     `}
                   >
-                    <Icon size={20} />
-                    <span>{tab.label}</span>
+                    <Icon 
+                      size={20} 
+                      className={`
+                        transition-transform group-hover:scale-110
+                        ${activeTab === tab.value ? 'text-blue-600' : 'text-white/90'}
+                      `}
+                    />
+                    <span className={`
+                      font-medium transition-all
+                      ${activeTab === tab.value ? 'text-blue-600' : 'text-white/90'}
+                    `}>
+                      {tab.label}
+                    </span>
+                    {activeTab === tab.value && (
+                      <span className="absolute inset-0 rounded-xl bg-white/10 animate-pulse-slow pointer-events-none"></span>
+                    )}
                   </button>
                 );
               })}

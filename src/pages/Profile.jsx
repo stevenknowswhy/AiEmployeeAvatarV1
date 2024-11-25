@@ -28,6 +28,7 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState('chat');
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [websiteLinks, setWebsiteLinks] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -115,16 +116,64 @@ const Profile = () => {
     }
   };
 
+  const generateEmployeeResponse = (employeeId, userMessage) => {
+    const responses = {
+      1: [ // Sarah Johnson - Senior Software Engineer
+        "That's an interesting technical challenge. Let me help you solve that.",
+        "I can help optimize that code for better performance.",
+        "Have you considered using a different design pattern here?",
+        "Let me share some best practices for this scenario."
+      ],
+      2: [ // Michael Chen - Product Manager
+        "Great idea! Let's discuss how this aligns with our product roadmap.",
+        "Have you gathered any user feedback on this feature?",
+        "Let's prioritize this in our next sprint planning.",
+        "I can help create a user story for this requirement."
+      ],
+      3: [ // Emma Davis - UX Designer
+        "From a user experience perspective, we should consider...",
+        "Let me create a quick mockup to visualize this.",
+        "Have you considered the accessibility implications?",
+        "We should test this with our user research group."
+      ],
+      4: [ // James Wilson - DevOps Engineer
+        "I can help set up the deployment pipeline for this.",
+        "Let's review the infrastructure requirements.",
+        "We should consider scaling implications here.",
+        "I'll check our monitoring setup for this service."
+      ]
+    };
+
+    const employeeResponses = responses[employeeId] || responses[1];
+    return employeeResponses[Math.floor(Math.random() * employeeResponses.length)];
+  };
+
   const sendMessage = () => {
     if (newMessage.trim()) {
-      const message = {
+      const userMessage = {
         id: Math.random().toString(36).substr(2, 9),
         text: newMessage,
         sender: 'user',
         timestamp: new Date()
       };
-      setMessages([...messages, message]);
+      setMessages(prev => [...prev, userMessage]);
       setNewMessage('');
+      
+      // Simulate employee typing
+      setIsTyping(true);
+      
+      // Simulate response delay
+      setTimeout(() => {
+        const employeeResponse = {
+          id: Math.random().toString(36).substr(2, 9),
+          text: generateEmployeeResponse(selectedEmployee?.id, newMessage),
+          sender: 'employee',
+          timestamp: new Date(),
+          employee: selectedEmployee
+        };
+        setMessages(prev => [...prev, employeeResponse]);
+        setIsTyping(false);
+      }, 1000 + Math.random() * 2000); // Random delay between 1-3 seconds
     }
   };
 
@@ -329,12 +378,37 @@ const Profile = () => {
                         : 'mr-auto bg-gray-100 dark:bg-gray-700'}
                     `}
                   >
+                    {msg.sender === 'employee' && (
+                      <div className="flex items-center space-x-2 mb-2">
+                        <img
+                          src={msg.employee?.photoUrl}
+                          alt={msg.employee?.name}
+                          className="w-6 h-6 rounded-full border border-gray-200 dark:border-gray-600"
+                        />
+                        <span className="text-sm font-medium">{msg.employee?.name}</span>
+                      </div>
+                    )}
                     <p className="text-sm">{msg.text}</p>
                     <span className="text-xs opacity-70 mt-2 block">
                       {msg.timestamp.toLocaleTimeString()}
                     </span>
                   </div>
                 ))}
+                {isTyping && (
+                  <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                    <img
+                      src={selectedEmployee?.photoUrl}
+                      alt={selectedEmployee?.name}
+                      className="w-6 h-6 rounded-full border border-gray-200 dark:border-gray-600"
+                    />
+                    <span>{selectedEmployee?.name} is typing...</span>
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Chat Input */}

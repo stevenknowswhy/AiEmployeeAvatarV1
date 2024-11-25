@@ -12,7 +12,8 @@ import {
   Moon, 
   Sun,
   Menu,
-  X 
+  X,
+  LogOut
 } from 'lucide-react';
 
 const Profile = () => {
@@ -89,7 +90,7 @@ const Profile = () => {
             <h1 className="text-xl font-bold text-white">Dashboard</h1>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="sm:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
+              className="sm:hidden p-4 rounded-lg hover:bg-white/10 transition-colors text-white"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -115,26 +116,20 @@ const Profile = () => {
                       setIsMobileMenuOpen(false);
                     }}
                     className={`
-                      group relative flex items-center gap-3 px-8 py-3 rounded-xl transition-all
+                      group relative p-4 rounded-xl transition-all
                       ${activeTab === tab.value 
                         ? 'bg-white text-blue-600 shadow-lg shadow-black/5' 
                         : 'bg-white/5 hover:bg-white/10'}
-                      ${!isMobileMenuOpen && 'sm:flex-1 sm:justify-center sm:max-w-xs'}
+                      ${!isMobileMenuOpen && 'sm:flex-1 sm:justify-center sm:max-w-[64px]'}
                     `}
                   >
                     <Icon 
-                      size={20} 
+                      size={24} 
                       className={`
-                        transition-transform group-hover:scale-110
+                        mx-auto transition-transform group-hover:scale-110
                         ${activeTab === tab.value ? 'text-blue-600' : 'text-white'}
                       `}
                     />
-                    <span className={`
-                      font-medium transition-all
-                      ${activeTab === tab.value ? 'text-blue-600' : 'text-white'}
-                    `}>
-                      {tab.label}
-                    </span>
                     {activeTab === tab.value && (
                       <span className="absolute inset-0 rounded-xl bg-white/10 animate-pulse-slow pointer-events-none"></span>
                     )}
@@ -194,9 +189,10 @@ const Profile = () => {
                 />
                 <button 
                   onClick={sendMessage}
-                  className="p-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-all flex-shrink-0 min-h-[48px] min-w-[48px] flex items-center justify-center"
+                  className="p-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-all flex-shrink-0 flex items-center justify-center"
+                  aria-label="Send Message"
                 >
-                  <Send size={20} />
+                  <Send size={24} />
                 </button>
               </div>
             </div>
@@ -219,10 +215,9 @@ const Profile = () => {
               />
               <button 
                 onClick={() => fileInputRef.current.click()}
-                className="w-full sm:w-auto mb-6 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors flex items-center justify-center space-x-2"
+                className="p-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors flex items-center justify-center"
               >
-                <Upload size={20} />
-                <span>Upload Documents</span>
+                <Upload size={24} />
               </button>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
@@ -258,10 +253,9 @@ const Profile = () => {
                   />
                   <button 
                     onClick={addWebsiteLink}
-                    className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors flex items-center justify-center space-x-2"
+                    className="p-4 rounded-lg bg-purple-600 hover:bg-purple-500 text-white transition-colors flex items-center justify-center"
                   >
-                    <LinkIcon size={20} />
-                    <span>Add Link</span>
+                    <LinkIcon size={24} />
                   </button>
                 </div>
 
@@ -309,15 +303,15 @@ const Profile = () => {
                   <button 
                     onClick={toggleTheme}
                     className={`
-                      p-3 rounded-lg transition-colors flex items-center space-x-2
+                      p-4 rounded-lg transition-colors flex items-center justify-center
                       ${theme === 'dark' 
                         ? 'bg-blue-600 hover:bg-blue-500' 
                         : 'bg-gray-200 hover:bg-gray-300'}
                       text-white
                     `}
+                    aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                   >
-                    {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                    <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                    {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
                   </button>
                 </div>
               </div>
@@ -387,9 +381,10 @@ const Profile = () => {
                 <h3 className="font-medium text-lg mb-4">Account</h3>
                 <button
                   onClick={handleLogout}
-                  className="w-full sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors"
+                  className="p-4 rounded-lg bg-red-600 hover:bg-red-500 text-white transition-colors flex items-center justify-center"
+                  aria-label="Sign Out"
                 >
-                  Sign Out
+                  <LogOut size={24} />
                 </button>
               </div>
             </div>

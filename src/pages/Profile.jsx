@@ -152,7 +152,7 @@ const Profile = () => {
         {activeTab === 'chat' && (
           <div className={`
             w-full rounded-xl overflow-hidden shadow-lg
-            ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}
+            ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}
           `}>
             <div className="h-[calc(100vh-16rem)] sm:h-[calc(100vh-12rem)] overflow-y-auto p-4 space-y-3">
               {messages.map(msg => (
@@ -161,12 +161,12 @@ const Profile = () => {
                   className={`
                     p-3 rounded-xl shadow-md transition-all max-w-[80%] sm:max-w-[60%] lg:max-w-[40%]
                     ${msg.sender === 'user' 
-                      ? 'ml-auto ' + (theme === 'dark' 
+                      ? 'ml-auto text-white ' + (theme === 'dark' 
                           ? 'bg-blue-600 hover:bg-blue-500' 
-                          : 'bg-blue-500 hover:bg-blue-400 text-white')
+                          : 'bg-blue-500 hover:bg-blue-400')
                       : theme === 'dark' 
-                          ? 'bg-gray-700 hover:bg-gray-600' 
-                          : 'bg-gray-100 hover:bg-gray-200'}
+                          ? 'bg-gray-700 hover:bg-gray-600 text-gray-100' 
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-900'}
                   `}
                 >
                   {msg.text}
@@ -183,8 +183,8 @@ const Profile = () => {
                   className={`
                     flex-grow p-3 rounded-lg transition-all
                     ${theme === 'dark' 
-                      ? 'bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 border-gray-600' 
-                      : 'bg-gray-100 text-gray-800 focus:ring-2 focus:ring-blue-500 border-gray-200'}
+                      ? 'bg-gray-700 text-gray-100 focus:ring-2 focus:ring-blue-500 border-gray-600 placeholder-gray-400' 
+                      : 'bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 border-gray-200 placeholder-gray-500'}
                     border
                   `}
                   placeholder="Type a message..."
@@ -204,7 +204,7 @@ const Profile = () => {
         {activeTab === 'knowledge' && (
           <div className={`
             w-full rounded-xl overflow-hidden shadow-lg p-6
-            ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}
+            ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}
           `}>
             <div className="w-full">
               <input 
@@ -229,8 +229,8 @@ const Profile = () => {
                     className={`
                       p-4 rounded-lg transition-all
                       ${theme === 'dark' 
-                        ? 'bg-gray-700 hover:bg-gray-600' 
-                        : 'bg-gray-50 hover:bg-gray-100'}
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-100' 
+                        : 'bg-gray-50 hover:bg-gray-100 text-gray-900'}
                     `}
                   >
                     <p className="truncate">{doc.name}</p>
@@ -247,8 +247,8 @@ const Profile = () => {
                     className={`
                       flex-grow p-3 rounded-lg transition-all
                       ${theme === 'dark' 
-                        ? 'bg-gray-700 text-white border-gray-600' 
-                        : 'bg-gray-100 text-gray-800 border-gray-200'}
+                        ? 'bg-gray-700 text-gray-100 border-gray-600 placeholder-gray-400' 
+                        : 'bg-gray-100 text-gray-900 border-gray-200 placeholder-gray-500'}
                       border
                     `}
                     onKeyPress={(e) => e.key === 'Enter' && addWebsiteLink()}
@@ -272,8 +272,8 @@ const Profile = () => {
                       className={`
                         p-4 rounded-lg transition-all
                         ${theme === 'dark' 
-                          ? 'bg-gray-700 hover:bg-gray-600' 
-                          : 'bg-gray-50 hover:bg-gray-100'}
+                          ? 'bg-gray-700 hover:bg-gray-600 text-gray-100' 
+                          : 'bg-gray-50 hover:bg-gray-100 text-gray-900'}
                       `}
                     >
                       <p className="truncate">{link.url}</p>
@@ -289,7 +289,7 @@ const Profile = () => {
         {activeTab === 'settings' && (
           <div className={`
             w-full rounded-xl overflow-hidden shadow-lg p-6
-            ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}
+            ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}
           `}>
             <div className="w-full max-w-4xl mx-auto space-y-6">
               <div className={`
@@ -299,7 +299,7 @@ const Profile = () => {
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div>
                     <h3 className="font-medium text-lg">Theme Preference</h3>
-                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                       Choose between light and dark mode
                     </p>
                   </div>
@@ -324,29 +324,54 @@ const Profile = () => {
                 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}
               `}>
                 <h3 className="font-medium text-lg mb-4">Notifications</h3>
-                <div className="space-y-3">
-                  <label className="flex items-center space-x-3">
-                    <input 
-                      type="checkbox" 
-                      className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
-                    />
+                <div className="space-y-6">
+                  <label className="flex items-center justify-between cursor-pointer">
                     <div>
                       <p className="font-medium">Desktop Notifications</p>
-                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                         Get notified about new messages and updates
                       </p>
                     </div>
+                    <div className="relative">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only"
+                        onChange={(e) => console.log('Desktop notifications:', e.target.checked)}
+                      />
+                      <div className={`
+                        block w-14 h-8 rounded-full transition-colors
+                        ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'}
+                        peer-checked:bg-blue-600
+                      `}></div>
+                      <div className={`
+                        absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform
+                        peer-checked:translate-x-6
+                      `}></div>
+                    </div>
                   </label>
-                  <label className="flex items-center space-x-3">
-                    <input 
-                      type="checkbox" 
-                      className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
-                    />
+
+                  <label className="flex items-center justify-between cursor-pointer">
                     <div>
                       <p className="font-medium">Sound Alerts</p>
-                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                         Play a sound when receiving new messages
                       </p>
+                    </div>
+                    <div className="relative">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer"
+                        onChange={(e) => console.log('Sound alerts:', e.target.checked)}
+                      />
+                      <div className={`
+                        block w-14 h-8 rounded-full transition-colors
+                        ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'}
+                        peer-checked:bg-blue-600
+                      `}></div>
+                      <div className={`
+                        absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform
+                        peer-checked:translate-x-6
+                      `}></div>
                     </div>
                   </label>
                 </div>

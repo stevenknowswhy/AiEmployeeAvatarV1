@@ -151,10 +151,10 @@ const Profile = () => {
         {/* Chat Tab */}
         {activeTab === 'chat' && (
           <div className={`
-            w-full rounded-xl overflow-hidden shadow-lg
+            w-full h-[calc(100vh-12rem)] rounded-xl overflow-hidden shadow-lg flex flex-col
             ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}
           `}>
-            <div className="h-[calc(100vh-16rem)] sm:h-[calc(100vh-12rem)] overflow-y-auto p-4 space-y-3">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.map(msg => (
                 <div 
                   key={msg.id} 
@@ -173,7 +173,10 @@ const Profile = () => {
                 </div>
               ))}
             </div>
-            <div className="p-4 border-t bg-opacity-50 backdrop-blur-sm sticky bottom-0">
+            <div className={`
+              p-4 border-t backdrop-blur-sm
+              ${theme === 'dark' ? 'border-gray-700 bg-gray-800/95' : 'border-gray-200 bg-white/95'}
+            `}>
               <div className="flex space-x-2 w-full max-w-6xl mx-auto">
                 <input 
                   type="text"
@@ -181,17 +184,17 @@ const Profile = () => {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                   className={`
-                    flex-grow p-3 rounded-lg transition-all
+                    flex-grow p-3 rounded-lg transition-all min-h-[48px]
                     ${theme === 'dark' 
                       ? 'bg-gray-700 text-gray-100 focus:ring-2 focus:ring-blue-500 border-gray-600 placeholder-gray-400' 
                       : 'bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 border-gray-200 placeholder-gray-500'}
-                    border
+                    border focus:outline-none
                   `}
                   placeholder="Type a message..."
                 />
                 <button 
                   onClick={sendMessage}
-                  className="p-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-all flex-shrink-0"
+                  className="p-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-all flex-shrink-0 min-h-[48px] min-w-[48px] flex items-center justify-center"
                 >
                   <Send size={20} />
                 </button>

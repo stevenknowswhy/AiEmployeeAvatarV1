@@ -2,8 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase/firebase';
-import SignUpForm from './components/SignUpForm';
 import Profile from './pages/Profile';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -20,26 +21,32 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Routes>
-          <Route
-            path="/"
-            element={user ? <Navigate to="/profile" /> : <SignUpForm />}
-          />
-          <Route
-            path="/profile"
-            element={user ? <Profile /> : <Navigate to="/" />}
-          />
-        </Routes>
-      </div>
+      <Routes>
+        <Route 
+          path="/" 
+          element={user ? <Navigate to="/profile" /> : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/login" 
+          element={user ? <Navigate to="/profile" /> : <Login />} 
+        />
+        <Route 
+          path="/signup" 
+          element={user ? <Navigate to="/profile" /> : <Signup />} 
+        />
+        <Route 
+          path="/profile" 
+          element={user ? <Profile /> : <Navigate to="/login" />} 
+        />
+      </Routes>
     </Router>
   );
 }

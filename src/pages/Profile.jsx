@@ -100,7 +100,7 @@ const Profile = () => {
             mt-4 sm:mt-6 pb-2
             ${isMobileMenuOpen ? 'block' : 'hidden sm:block'}
           `}>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2 sm:gap-4 max-w-2xl mx-auto">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2 sm:gap-6 w-full">
               {[
                 { label: 'Chat', value: 'chat', icon: MessageCircle },
                 { label: 'Knowledge Base', value: 'knowledge', icon: BookOpen },
@@ -115,11 +115,11 @@ const Profile = () => {
                       setIsMobileMenuOpen(false);
                     }}
                     className={`
-                      group relative flex items-center gap-3 px-6 py-3 rounded-xl transition-all
+                      group relative flex items-center gap-3 px-8 py-3 rounded-xl transition-all
                       ${activeTab === tab.value 
                         ? 'bg-white text-blue-600 shadow-lg shadow-black/5' 
                         : 'bg-white/5 hover:bg-white/10'}
-                      ${!isMobileMenuOpen && 'sm:flex-1 sm:justify-center'}
+                      ${!isMobileMenuOpen && 'sm:flex-1 sm:justify-center sm:max-w-xs'}
                     `}
                   >
                     <Icon 
@@ -159,7 +159,7 @@ const Profile = () => {
                 <div 
                   key={msg.id} 
                   className={`
-                    p-3 rounded-xl shadow-md transition-all max-w-[80%] sm:max-w-[60%] lg:max-w-[50%]
+                    p-3 rounded-xl shadow-md transition-all max-w-[80%] sm:max-w-[60%] lg:max-w-[40%]
                     ${msg.sender === 'user' 
                       ? 'ml-auto ' + (theme === 'dark' 
                           ? 'bg-blue-600 hover:bg-blue-500' 
@@ -174,7 +174,7 @@ const Profile = () => {
               ))}
             </div>
             <div className="p-4 border-t bg-opacity-50 backdrop-blur-sm sticky bottom-0">
-              <div className="max-w-4xl mx-auto flex space-x-2">
+              <div className="flex space-x-2 w-full max-w-6xl mx-auto">
                 <input 
                   type="text"
                   value={newMessage}
@@ -222,7 +222,7 @@ const Profile = () => {
                 <span>Upload Documents</span>
               </button>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
                 {documents.map(doc => (
                   <div 
                     key={doc.id} 
@@ -262,7 +262,7 @@ const Profile = () => {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
                   {websiteLinks.map(link => (
                     <a 
                       key={link.id}
@@ -291,7 +291,7 @@ const Profile = () => {
             w-full rounded-xl overflow-hidden shadow-lg p-6
             ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}
           `}>
-            <div className="max-w-2xl mx-auto space-y-6">
+            <div className="w-full max-w-4xl mx-auto space-y-6">
               <div className={`
                 p-4 rounded-lg
                 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}

@@ -75,267 +75,286 @@ const Profile = () => {
     }
   };
 
-  const renderContent = () => {
-    switch(activeTab) {
-      case 'chat':
-        return (
-          <div className={`
-            p-4 sm:p-6 rounded-lg w-full
-            ${theme === 'dark' 
-              ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white' 
-              : 'bg-gradient-to-br from-blue-50 to-blue-100 text-gray-800'}
-          `}>
-            <div className="h-[calc(100vh-16rem)] sm:h-[calc(100vh-12rem)] overflow-y-auto mb-4 space-y-3 p-4">
-              {messages.map(msg => (
-                <div 
-                  key={msg.id} 
-                  className={`
-                    p-3 rounded-xl shadow-md transition-all max-w-[80%] sm:max-w-[60%] lg:max-w-[50%]
-                    ${msg.sender === 'user' 
-                      ? 'ml-auto ' + (theme === 'dark' 
-                          ? 'bg-indigo-700 hover:bg-indigo-600' 
-                          : 'bg-blue-200 hover:bg-blue-300')
-                      : theme === 'dark' 
-                          ? 'bg-green-800 hover:bg-green-700' 
-                          : 'bg-green-200 hover:bg-green-300'}
-                  `}
-                >
-                  {msg.text}
-                </div>
-              ))}
-            </div>
-            <div className="flex space-x-2 px-4 max-w-4xl mx-auto">
-              <input 
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                className={`
-                  flex-grow p-3 rounded-full transition-all 
-                  ${theme === 'dark' 
-                    ? 'bg-gray-700 text-white focus:ring-2 focus:ring-blue-500' 
-                    : 'bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-blue-300'}
-                `}
-                placeholder="Type a message..."
-              />
-              <button 
-                onClick={sendMessage}
-                className={`
-                  p-3 rounded-full transition-all flex-shrink-0
-                  ${theme === 'dark' 
-                    ? 'bg-blue-600 hover:bg-blue-500' 
-                    : 'bg-blue-500 hover:bg-blue-600'} 
-                  text-white
-                `}
-              >
-                <Send size={20} />
-              </button>
-            </div>
-          </div>
-        );
-      case 'knowledge':
-        return (
-          <div className={`
-            p-4 sm:p-6 rounded-lg w-full
-            ${theme === 'dark' 
-              ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white' 
-              : 'bg-gradient-to-br from-green-50 to-green-100 text-gray-800'}
-          `}>
-            <div className="max-w-4xl mx-auto">
-              <input 
-                type="file" 
-                ref={fileInputRef}
-                onChange={handleFileUpload} 
-                multiple 
-                className="hidden"
-              />
-              <button 
-                onClick={() => fileInputRef.current.click()}
-                className={`
-                  flex items-center space-x-2 p-3 rounded-full mb-4 transition-all w-full sm:w-auto
-                  ${theme === 'dark' 
-                    ? 'bg-green-600 hover:bg-green-500' 
-                    : 'bg-green-500 hover:bg-green-600'} 
-                  text-white
-                `}
-              >
-                <Upload size={20} className="flex-shrink-0" /> 
-                <span className="truncate">Upload Documents</span>
-              </button>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[calc(100vh-24rem)] overflow-y-auto">
-                {documents.map(doc => (
-                  <div 
-                    key={doc.id} 
-                    className={`
-                      p-3 rounded-xl transition-all 
-                      ${theme === 'dark' 
-                        ? 'bg-gray-700 hover:bg-gray-600' 
-                        : 'bg-white shadow-sm hover:shadow-md'}
-                    `}
-                  >
-                    <p className="truncate">{doc.name}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                <input 
-                  type="text" 
-                  ref={linkInputRef}
-                  placeholder="Enter website link" 
-                  className={`
-                    flex-grow p-3 rounded-full transition-all
-                    ${theme === 'dark' 
-                      ? 'bg-gray-700 text-white focus:ring-2 focus:ring-purple-500' 
-                      : 'bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-purple-300'}
-                  `}
-                  onKeyPress={(e) => e.key === 'Enter' && addWebsiteLink()}
-                />
-                <button 
-                  onClick={addWebsiteLink}
-                  className={`
-                    p-3 rounded-full transition-all flex-shrink-0
-                    ${theme === 'dark' 
-                      ? 'bg-purple-600 hover:bg-purple-500' 
-                      : 'bg-purple-500 hover:bg-purple-600'} 
-                    text-white
-                  `}
-                >
-                  <LinkIcon size={20} />
-                </button>
-              </div>
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-48 overflow-y-auto">
-                {websiteLinks.map(link => (
-                  <div 
-                    key={link.id} 
-                    className={`
-                      p-3 rounded-xl transition-all 
-                      ${theme === 'dark' 
-                        ? 'bg-gray-700 hover:bg-gray-600' 
-                        : 'bg-white shadow-sm hover:shadow-md'}
-                    `}
-                  >
-                    <p className="truncate">{link.url}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-      case 'settings':
-        return (
-          <div className={`
-            p-4 sm:p-6 rounded-lg w-full
-            ${theme === 'dark' 
-              ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white' 
-              : 'bg-gradient-to-br from-purple-50 to-purple-100 text-gray-800'}
-          `}>
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-center justify-between mb-4 p-3 rounded-xl flex-wrap gap-2">
-                <span className="font-medium">Dark Mode</span>
-                <button 
-                  onClick={toggleTheme}
-                  className={`
-                    p-3 rounded-full transition-all
-                    ${theme === 'dark' 
-                      ? 'bg-blue-600 hover:bg-blue-500' 
-                      : 'bg-gray-500 hover:bg-gray-600'} 
-                    text-white flex items-center space-x-2
-                  `}
-                >
-                  {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                  <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
-                </button>
-              </div>
-              <div className="space-y-3">
-                <label className="flex items-center space-x-2 p-3 rounded-xl">
-                  <input 
-                    type="checkbox" 
-                    className="rounded text-blue-500 focus:ring-blue-500"
-                  />
-                  <span>Enable Desktop Notifications</span>
-                </label>
-                <label className="flex items-center space-x-2 p-3 rounded-xl">
-                  <input 
-                    type="checkbox" 
-                    className="rounded text-blue-500 focus:ring-blue-500"
-                  />
-                  <span>Sound Alerts</span>
-                </label>
-                <button
-                  onClick={handleLogout}
-                  className="w-full mt-4 p-3 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all"
-                >
-                  Sign Out
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className={`
       min-h-screen w-full
       ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}
       transition-colors duration-300
     `}>
-      <div className="w-full">
-        {/* Mobile Menu Button */}
-        <div className="sm:hidden flex justify-end p-4">
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`p-2 rounded-lg ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className={`
-          sm:flex border-b w-full
-          ${isMobileMenuOpen ? 'flex' : 'hidden'}
-          ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}
-          flex-col sm:flex-row
-        `}>
-          {[
-            { label: 'Chat', value: 'chat', icon: MessageCircle },
-            { label: 'Knowledge Base', value: 'knowledge', icon: BookOpen },
-            { label: 'Settings', value: 'settings', icon: Settings }
-          ].map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.value}
-                onClick={() => {
-                  setActiveTab(tab.value);
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`
-                  flex-1 p-4 transition-all flex items-center justify-center space-x-2
-                  ${activeTab === tab.value 
-                    ? (theme === 'dark' 
-                        ? 'bg-blue-900 text-white' 
-                        : 'bg-blue-500 text-white')
-                    : (theme === 'dark'
-                        ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}
-                `}
-              >
-                <Icon size={20} />
-                <span className="inline">{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Main Content */}
-        <div className="w-full p-4 lg:p-6">
-          <div className="max-w-[2000px] mx-auto">
-            {renderContent()}
+      {/* Header/Navigation */}
+      <div className="w-full bg-gradient-to-r from-blue-600 to-purple-700 text-white">
+        <div className="w-full px-4 py-3">
+          {/* Mobile Menu Button */}
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold">Dashboard</h1>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="sm:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
+
+          {/* Navigation Tabs */}
+          <div className={`
+            mt-4 sm:mt-6
+            ${isMobileMenuOpen ? 'block' : 'hidden sm:block'}
+          `}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-1">
+              {[
+                { label: 'Chat', value: 'chat', icon: MessageCircle },
+                { label: 'Knowledge Base', value: 'knowledge', icon: BookOpen },
+                { label: 'Settings', value: 'settings', icon: Settings }
+              ].map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.value}
+                    onClick={() => {
+                      setActiveTab(tab.value);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`
+                      flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors
+                      ${activeTab === tab.value 
+                        ? 'bg-white/20 text-white' 
+                        : 'text-white/70 hover:bg-white/10 hover:text-white'}
+                      ${!isMobileMenuOpen && 'sm:flex-1 sm:justify-center'}
+                      my-1 sm:my-0
+                    `}
+                  >
+                    <Icon size={20} />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="w-full p-4 lg:p-6">
+        <div className="max-w-[2000px] mx-auto">
+          {/* Chat Tab */}
+          {activeTab === 'chat' && (
+            <div className={`
+              rounded-lg overflow-hidden shadow-lg
+              ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}
+            `}>
+              <div className="h-[calc(100vh-16rem)] sm:h-[calc(100vh-12rem)] overflow-y-auto p-4 space-y-3">
+                {messages.map(msg => (
+                  <div 
+                    key={msg.id} 
+                    className={`
+                      p-3 rounded-xl shadow-md transition-all max-w-[80%] sm:max-w-[60%] lg:max-w-[50%]
+                      ${msg.sender === 'user' 
+                        ? 'ml-auto ' + (theme === 'dark' 
+                            ? 'bg-blue-600 hover:bg-blue-500' 
+                            : 'bg-blue-500 hover:bg-blue-400 text-white')
+                        : theme === 'dark' 
+                            ? 'bg-gray-700 hover:bg-gray-600' 
+                            : 'bg-gray-100 hover:bg-gray-200'}
+                    `}
+                  >
+                    {msg.text}
+                  </div>
+                ))}
+              </div>
+              <div className="p-4 border-t bg-opacity-50 backdrop-blur-sm sticky bottom-0">
+                <div className="max-w-4xl mx-auto flex space-x-2">
+                  <input 
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    className={`
+                      flex-grow p-3 rounded-lg transition-all
+                      ${theme === 'dark' 
+                        ? 'bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 border-gray-600' 
+                        : 'bg-gray-100 text-gray-800 focus:ring-2 focus:ring-blue-500 border-gray-200'}
+                      border
+                    `}
+                    placeholder="Type a message..."
+                  />
+                  <button 
+                    onClick={sendMessage}
+                    className="p-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-all flex-shrink-0"
+                  >
+                    <Send size={20} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Knowledge Base Tab */}
+          {activeTab === 'knowledge' && (
+            <div className={`
+              rounded-lg overflow-hidden shadow-lg p-6
+              ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}
+            `}>
+              <div className="max-w-7xl mx-auto">
+                <input 
+                  type="file" 
+                  ref={fileInputRef}
+                  onChange={handleFileUpload} 
+                  multiple 
+                  className="hidden"
+                />
+                <button 
+                  onClick={() => fileInputRef.current.click()}
+                  className="w-full sm:w-auto mb-6 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors flex items-center justify-center space-x-2"
+                >
+                  <Upload size={20} />
+                  <span>Upload Documents</span>
+                </button>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {documents.map(doc => (
+                    <div 
+                      key={doc.id} 
+                      className={`
+                        p-4 rounded-lg transition-all
+                        ${theme === 'dark' 
+                          ? 'bg-gray-700 hover:bg-gray-600' 
+                          : 'bg-gray-50 hover:bg-gray-100'}
+                      `}
+                    >
+                      <p className="truncate">{doc.name}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8">
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mb-4">
+                    <input 
+                      type="text" 
+                      ref={linkInputRef}
+                      placeholder="Enter website link" 
+                      className={`
+                        flex-grow p-3 rounded-lg transition-all
+                        ${theme === 'dark' 
+                          ? 'bg-gray-700 text-white border-gray-600' 
+                          : 'bg-gray-100 text-gray-800 border-gray-200'}
+                        border
+                      `}
+                      onKeyPress={(e) => e.key === 'Enter' && addWebsiteLink()}
+                    />
+                    <button 
+                      onClick={addWebsiteLink}
+                      className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors flex items-center justify-center space-x-2"
+                    >
+                      <LinkIcon size={20} />
+                      <span>Add Link</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {websiteLinks.map(link => (
+                      <a 
+                        key={link.id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer" 
+                        className={`
+                          p-4 rounded-lg transition-all
+                          ${theme === 'dark' 
+                            ? 'bg-gray-700 hover:bg-gray-600' 
+                            : 'bg-gray-50 hover:bg-gray-100'}
+                        `}
+                      >
+                        <p className="truncate">{link.url}</p>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Settings Tab */}
+          {activeTab === 'settings' && (
+            <div className={`
+              rounded-lg overflow-hidden shadow-lg p-6
+              ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}
+            `}>
+              <div className="max-w-2xl mx-auto space-y-6">
+                <div className={`
+                  p-4 rounded-lg
+                  ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}
+                `}>
+                  <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                      <h3 className="font-medium text-lg">Theme Preference</h3>
+                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                        Choose between light and dark mode
+                      </p>
+                    </div>
+                    <button 
+                      onClick={toggleTheme}
+                      className={`
+                        p-3 rounded-lg transition-colors flex items-center space-x-2
+                        ${theme === 'dark' 
+                          ? 'bg-blue-600 hover:bg-blue-500' 
+                          : 'bg-gray-200 hover:bg-gray-300'}
+                        text-white
+                      `}
+                    >
+                      {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                      <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className={`
+                  p-4 rounded-lg
+                  ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}
+                `}>
+                  <h3 className="font-medium text-lg mb-4">Notifications</h3>
+                  <div className="space-y-3">
+                    <label className="flex items-center space-x-3">
+                      <input 
+                        type="checkbox" 
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
+                      />
+                      <div>
+                        <p className="font-medium">Desktop Notifications</p>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                          Get notified about new messages and updates
+                        </p>
+                      </div>
+                    </label>
+                    <label className="flex items-center space-x-3">
+                      <input 
+                        type="checkbox" 
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
+                      />
+                      <div>
+                        <p className="font-medium">Sound Alerts</p>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                          Play a sound when receiving new messages
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className={`
+                  p-4 rounded-lg
+                  ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}
+                `}>
+                  <h3 className="font-medium text-lg mb-4">Account</h3>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

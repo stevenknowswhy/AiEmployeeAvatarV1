@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
@@ -13,7 +13,13 @@ import {
   Sun,
   Menu,
   X,
-  LogOut
+  LogOut,
+  ChevronDown,
+  MoreVertical,
+  Key,
+  Eye,
+  EyeOff,
+  Plus
 } from 'lucide-react';
 
 const Profile = () => {
@@ -25,8 +31,76 @@ const Profile = () => {
   const [documents, setDocuments] = useState([]);
   const [websiteLinks, setWebsiteLinks] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [isAddingKey, setIsAddingKey] = useState(false);
+  const [savedApiKeys, setSavedApiKeys] = useState([]);
+  const [employees] = useState([
+    {
+      id: 1,
+      name: 'Sarah Johnson',
+      title: 'Senior Software Engineer',
+      photoUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah&backgroundColor=b6e3f4',
+      status: 'Online',
+      department: 'Engineering',
+      timezone: 'PST'
+    },
+    {
+      id: 2,
+      name: 'Michael Chen',
+      title: 'Product Manager',
+      photoUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael&backgroundColor=c1f4b6',
+      status: 'In a meeting',
+      department: 'Product',
+      timezone: 'EST'
+    },
+    {
+      id: 3,
+      name: 'Emma Davis',
+      title: 'UX Designer',
+      photoUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma&backgroundColor=f4b6e3',
+      status: 'Online',
+      department: 'Design',
+      timezone: 'GMT'
+    },
+    {
+      id: 4,
+      name: 'James Wilson',
+      title: 'DevOps Engineer',
+      photoUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=James&backgroundColor=f4d6b6',
+      status: 'Away',
+      department: 'Infrastructure',
+      timezone: 'CST'
+    }
+  ]);
+
+  const aiPlatforms = [
+    { id: 'openai', name: 'OpenAI', icon: '🤖' },
+    { id: 'anthropic', name: 'Anthropic', icon: '🧠' },
+    { id: 'cohere', name: 'Cohere', icon: '💡' },
+    { id: 'stability', name: 'Stability AI', icon: '🎨' },
+    { id: 'google', name: 'Google AI', icon: '🌐' },
+  ];
+
   const fileInputRef = useRef(null);
   const linkInputRef = useRef(null);
+
+  useEffect(() => {
+    // Set default selected employee
+    if (!selectedEmployee && employees.length > 0) {
+      setSelectedEmployee(employees[0]);
+    }
+  }, [employees, selectedEmployee]);
+
+  const chatProfile = {
+    name: selectedEmployee?.name,
+    title: selectedEmployee?.title,
+    photoUrl: selectedEmployee?.photoUrl,
+    status: selectedEmployee?.status
+  };
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
@@ -74,6 +148,27 @@ const Profile = () => {
       ]);
       linkInputRef.current.value = '';
     }
+  };
+
+  const handleSaveApiKey = () => {
+    if (selectedPlatform && apiKey) {
+      setSavedApiKeys([
+        ...savedApiKeys,
+        {
+          id: Date.now(),
+          platform: selectedPlatform,
+          key: apiKey,
+          addedAt: new Date()
+        }
+      ]);
+      setSelectedPlatform('');
+      setApiKey('');
+      setIsAddingKey(false);
+    }
+  };
+
+  const handleRemoveApiKey = (keyId) => {
+    setSavedApiKeys(savedApiKeys.filter(key => key.id !== keyId));
   };
 
   return (
@@ -143,49 +238,127 @@ const Profile = () => {
               w-full rounded-xl overflow-hidden shadow-xl
               ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}
             `}>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 w-full">
-                <div className="w-full max-w-[1920px] mx-auto">
-                  {messages.map(msg => (
-                    <div 
-                      key={msg.id} 
-                      className={`
-                        p-4 rounded-xl shadow-md transition-all w-full
-                        ${msg.sender === 'user' 
-                          ? 'ml-auto text-white ' + (theme === 'dark' 
-                              ? 'bg-blue-600 hover:bg-blue-500' 
-                              : 'bg-blue-500 hover:bg-blue-400')
-                          : theme === 'dark' 
-                              ? 'bg-gray-700 hover:bg-gray-600 text-gray-100' 
-                              : 'bg-gray-100 hover:bg-gray-200 text-gray-900'}
-                      `}
-                    >
-                      {msg.text}
+              {/* Chat Profile Dropdown */}
+              <div className="border-b border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <img
+                      src={selectedEmployee?.photoUrl}
+                      alt={selectedEmployee?.name}
+                      className="w-10 h-10 rounded-full border-2 border-blue-500/20"
+                    />
+                    <div className="text-left">
+                      <h3 className="font-medium">{selectedEmployee?.name}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{selectedEmployee?.title}</p>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="flex items-center">
+                      <span className={`w-2 h-2 rounded-full mr-2 ${
+                        selectedEmployee?.status === 'Online' ? 'bg-green-500' :
+                        selectedEmployee?.status === 'Away' ? 'bg-yellow-500' :
+                        'bg-gray-500'
+                      }`}></span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">{selectedEmployee?.status}</span>
+                    </span>
+                    <ChevronDown className={`w-5 h-5 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                  </div>
+                </button>
+                
+                {/* Dropdown Content */}
+                {isProfileDropdownOpen && (
+                  <div className="border-t border-gray-200 dark:border-gray-700">
+                    {/* Current Employee Details */}
+                    <div className="px-4 py-3 space-y-3 border-b border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500 dark:text-gray-400">Department</span>
+                        <span>{selectedEmployee?.department}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500 dark:text-gray-400">Timezone</span>
+                        <span>{selectedEmployee?.timezone}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Employee List */}
+                    <div className="py-2 max-h-64 overflow-y-auto">
+                      {employees.map(employee => (
+                        <button
+                          key={employee.id}
+                          onClick={() => {
+                            setSelectedEmployee(employee);
+                            setIsProfileDropdownOpen(false);
+                          }}
+                          className={`w-full px-4 py-2 flex items-center space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
+                            selectedEmployee?.id === employee.id ? 'bg-gray-50 dark:bg-gray-700/50' : ''
+                          }`}
+                        >
+                          <img
+                            src={employee.photoUrl}
+                            alt={employee.name}
+                            className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700"
+                          />
+                          <div className="flex-1 text-left">
+                            <h4 className="font-medium text-sm">{employee.name}</h4>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{employee.title}</p>
+                          </div>
+                          <span className={`w-2 h-2 rounded-full ${
+                            employee.status === 'Online' ? 'bg-green-500' :
+                            employee.status === 'Away' ? 'bg-yellow-500' :
+                            'bg-gray-500'
+                          }`}></span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="w-full p-4 md:p-6 border-t backdrop-blur-sm">
-                <div className="flex gap-3">
-                  <input 
+
+              {/* Chat Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 max-h-[calc(100vh-20rem)]">
+                {messages.map(msg => (
+                  <div 
+                    key={msg.id} 
+                    className={`
+                      p-4 rounded-xl shadow-md transition-all w-full max-w-2xl
+                      ${msg.sender === 'user' 
+                        ? 'ml-auto bg-blue-600 text-white' 
+                        : 'mr-auto bg-gray-100 dark:bg-gray-700'}
+                    `}
+                  >
+                    <p className="text-sm">{msg.text}</p>
+                    <span className="text-xs opacity-70 mt-2 block">
+                      {msg.timestamp.toLocaleTimeString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Chat Input */}
+              <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center space-x-2">
+                  <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    placeholder="Type your message..."
                     className={`
-                      flex-1 p-4 rounded-xl transition-all
+                      flex-1 p-2 rounded-xl border border-gray-200 dark:border-gray-700 
                       ${theme === 'dark' 
-                        ? 'bg-gray-700 text-gray-100 focus:ring-2 focus:ring-blue-500 border-gray-600 placeholder-gray-400' 
-                        : 'bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 border-gray-200 placeholder-gray-500'}
-                      border focus:outline-none
+                        ? 'bg-gray-800 text-white placeholder-gray-400' 
+                        : 'bg-white text-gray-900 placeholder-gray-500'}
+                      focus:outline-none focus:ring-2 focus:ring-blue-500
                     `}
-                    placeholder="Type a message..."
                   />
-                  <button 
+                  <button
                     onClick={sendMessage}
-                    className="p-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white transition-all flex items-center justify-center shadow-lg"
-                    aria-label="Send Message"
+                    className="p-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors"
                   >
-                    <Send size={24} />
+                    <Send className="w-5 h-5" />
                   </button>
                 </div>
               </div>
@@ -279,108 +452,154 @@ const Profile = () => {
 
           {/* Settings Tab */}
           {activeTab === 'settings' && (
-            <div className={`
-              w-full rounded-xl overflow-hidden shadow-xl
-              ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}
-            `}>
-              <div className="w-full max-w-[1920px] mx-auto space-y-6">
-                <div className={`
-                  p-4 rounded-lg
-                  ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}
-                `}>
-                  <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="space-y-6">
+              {/* Theme Toggle */}
+              <div className={`
+                p-6 rounded-xl shadow-xl
+                ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}
+              `}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium">Appearance</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Choose your preferred theme
+                    </p>
+                  </div>
+                  <button
+                    onClick={toggleTheme}
+                    className={`
+                      p-2 rounded-xl transition-colors
+                      ${theme === 'dark'
+                        ? 'bg-gray-700 hover:bg-gray-600'
+                        : 'bg-gray-100 hover:bg-gray-200'}
+                    `}
+                  >
+                    {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* API Keys Management */}
+              <div className={`
+                p-6 rounded-xl shadow-xl
+                ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}
+              `}>
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-lg font-medium">API Keys</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Manage your AI platform API keys
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsAddingKey(!isAddingKey)}
+                    className={`
+                      p-2 rounded-xl transition-colors flex items-center space-x-2
+                      ${isAddingKey
+                        ? 'bg-red-500 hover:bg-red-600 text-white'
+                        : 'bg-blue-500 hover:bg-blue-600 text-white'}
+                    `}
+                  >
+                    {isAddingKey ? <X className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                  </button>
+                </div>
+
+                {/* Add New API Key Form */}
+                {isAddingKey && (
+                  <div className="space-y-4 mb-6 p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50">
                     <div>
-                      <h3 className="font-medium text-lg">Theme Preference</h3>
-                      <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                        Choose between light and dark mode
-                      </p>
+                      <label className="block text-sm font-medium mb-1">Platform</label>
+                      <select
+                        value={selectedPlatform}
+                        onChange={(e) => setSelectedPlatform(e.target.value)}
+                        className={`
+                          w-full p-2 rounded-xl border
+                          ${theme === 'dark'
+                            ? 'bg-gray-700 border-gray-600 text-white'
+                            : 'bg-white border-gray-200 text-gray-900'}
+                        `}
+                      >
+                        <option value="">Select Platform</option>
+                        {aiPlatforms.map(platform => (
+                          <option key={platform.id} value={platform.id}>
+                            {platform.icon} {platform.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                    <button 
-                      onClick={toggleTheme}
+
+                    <div>
+                      <label className="block text-sm font-medium mb-1">API Key</label>
+                      <div className="relative">
+                        <input
+                          type={showApiKey ? 'text' : 'password'}
+                          value={apiKey}
+                          onChange={(e) => setApiKey(e.target.value)}
+                          className={`
+                            w-full p-2 pr-10 rounded-xl border
+                            ${theme === 'dark'
+                              ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
+                              : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'}
+                          `}
+                          placeholder="Enter your API key"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowApiKey(!showApiKey)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+                        >
+                          {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleSaveApiKey}
+                      disabled={!selectedPlatform || !apiKey}
                       className={`
-                        p-4 rounded-lg transition-colors flex items-center justify-center
-                        ${theme === 'dark' 
-                          ? 'bg-blue-600 hover:bg-blue-500' 
-                          : 'bg-gray-200 hover:bg-gray-300'}
-                        text-white
+                        w-full p-2 rounded-xl text-white transition-colors
+                        ${(!selectedPlatform || !apiKey)
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-blue-500 hover:bg-blue-600'}
                       `}
-                      aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                     >
-                      {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
+                      Save API Key
                     </button>
                   </div>
-                </div>
+                )}
 
-                <div className={`
-                  p-4 rounded-lg
-                  ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}
-                `}>
-                  <h3 className="font-medium text-lg mb-4">Notifications</h3>
-                  <div className="space-y-6">
-                    <label className="flex items-center justify-between cursor-pointer">
-                      <div>
-                        <p className="font-medium">Desktop Notifications</p>
-                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                          Get notified about new messages and updates
-                        </p>
+                {/* Saved API Keys List */}
+                <div className="space-y-3">
+                  {savedApiKeys.map(key => {
+                    const platform = aiPlatforms.find(p => p.id === key.platform);
+                    return (
+                      <div
+                        key={key.id}
+                        className={`
+                          p-3 rounded-xl border flex items-center justify-between
+                          ${theme === 'dark'
+                            ? 'bg-gray-700/50 border-gray-600'
+                            : 'bg-gray-50 border-gray-200'}
+                        `}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <span className="text-xl">{platform?.icon}</span>
+                          <div>
+                            <h4 className="font-medium">{platform?.name}</h4>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Added {new Date(key.addedAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveApiKey(key.id)}
+                          className="p-1 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 text-red-500"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
                       </div>
-                      <div className="relative">
-                        <input 
-                          type="checkbox" 
-                          className="sr-only"
-                          onChange={(e) => console.log('Desktop notifications:', e.target.checked)}
-                        />
-                        <div className={`
-                          block w-14 h-8 rounded-full transition-colors
-                          ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'}
-                          peer-checked:bg-blue-600
-                        `}></div>
-                        <div className={`
-                          absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform
-                          peer-checked:translate-x-6
-                        `}></div>
-                      </div>
-                    </label>
-
-                    <label className="flex items-center justify-between cursor-pointer">
-                      <div>
-                        <p className="font-medium">Sound Alerts</p>
-                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                          Play a sound when receiving new messages
-                        </p>
-                      </div>
-                      <div className="relative">
-                        <input 
-                          type="checkbox" 
-                          className="sr-only peer"
-                          onChange={(e) => console.log('Sound alerts:', e.target.checked)}
-                        />
-                        <div className={`
-                          block w-14 h-8 rounded-full transition-colors
-                          ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'}
-                          peer-checked:bg-blue-600
-                        `}></div>
-                        <div className={`
-                          absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform
-                          peer-checked:translate-x-6
-                        `}></div>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-
-                <div className={`
-                  p-4 rounded-lg
-                  ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}
-                `}>
-                  <h3 className="font-medium text-lg mb-4">Account</h3>
-                  <button
-                    onClick={handleLogout}
-                    className="p-4 rounded-lg bg-red-600 hover:bg-red-500 text-white transition-colors flex items-center justify-center"
-                    aria-label="Sign Out"
-                  >
-                    <LogOut size={24} />
-                  </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>

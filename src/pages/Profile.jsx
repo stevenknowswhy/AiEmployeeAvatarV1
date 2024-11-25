@@ -118,7 +118,7 @@ const Profile = () => {
                       group relative flex items-center gap-3 px-6 py-3 rounded-xl transition-all
                       ${activeTab === tab.value 
                         ? 'bg-white text-blue-600 shadow-lg shadow-black/5' 
-                        : 'text-white/90 hover:bg-white/10'}
+                        : 'bg-white/5 hover:bg-white/10'}
                       ${!isMobileMenuOpen && 'sm:flex-1 sm:justify-center'}
                     `}
                   >
@@ -126,12 +126,12 @@ const Profile = () => {
                       size={20} 
                       className={`
                         transition-transform group-hover:scale-110
-                        ${activeTab === tab.value ? 'text-blue-600' : 'text-white/90'}
+                        ${activeTab === tab.value ? 'text-blue-600' : 'text-white'}
                       `}
                     />
                     <span className={`
                       font-medium transition-all
-                      ${activeTab === tab.value ? 'text-blue-600' : 'text-white/90'}
+                      ${activeTab === tab.value ? 'text-blue-600' : 'text-white'}
                     `}>
                       {tab.label}
                     </span>

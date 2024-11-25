@@ -10,7 +10,9 @@ import {
   Upload, 
   Link as LinkIcon, 
   Moon, 
-  Sun 
+  Sun,
+  Menu,
+  X 
 } from 'lucide-react';
 
 const Profile = () => {
@@ -21,6 +23,7 @@ const Profile = () => {
   const [newMessage, setNewMessage] = useState('');
   const [documents, setDocuments] = useState([]);
   const [websiteLinks, setWebsiteLinks] = useState([]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const fileInputRef = useRef(null);
   const linkInputRef = useRef(null);
 
@@ -82,30 +85,31 @@ const Profile = () => {
               ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white' 
               : 'bg-gradient-to-br from-blue-50 to-blue-100 text-gray-800'}
           `}>
-            <div className="h-96 overflow-y-auto mb-4 space-y-3">
+            <div className="h-[calc(100vh-16rem)] sm:h-96 overflow-y-auto mb-4 space-y-3 p-4">
               {messages.map(msg => (
                 <div 
                   key={msg.id} 
                   className={`
-                    p-3 rounded-xl shadow-md transition-all 
+                    p-3 rounded-xl shadow-md transition-all max-w-[80%] sm:max-w-[70%] 
                     ${msg.sender === 'user' 
-                      ? (theme === 'dark' 
+                      ? 'ml-auto ' + (theme === 'dark' 
                           ? 'bg-indigo-700 hover:bg-indigo-600' 
-                          : 'bg-blue-200 hover:bg-blue-300') 
-                      : (theme === 'dark' 
+                          : 'bg-blue-200 hover:bg-blue-300')
+                      : theme === 'dark' 
                           ? 'bg-green-800 hover:bg-green-700' 
-                          : 'bg-green-200 hover:bg-green-300')}
+                          : 'bg-green-200 hover:bg-green-300'}
                   `}
                 >
                   {msg.text}
                 </div>
               ))}
             </div>
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 px-4">
               <input 
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 className={`
                   flex-grow p-3 rounded-full transition-all 
                   ${theme === 'dark' 
@@ -117,7 +121,7 @@ const Profile = () => {
               <button 
                 onClick={sendMessage}
                 className={`
-                  p-3 rounded-full transition-all 
+                  p-3 rounded-full transition-all flex-shrink-0
                   ${theme === 'dark' 
                     ? 'bg-blue-600 hover:bg-blue-500' 
                     : 'bg-blue-500 hover:bg-blue-600'} 
@@ -147,16 +151,17 @@ const Profile = () => {
             <button 
               onClick={() => fileInputRef.current.click()}
               className={`
-                flex items-center space-x-2 p-3 rounded-full mb-4 transition-all
+                flex items-center space-x-2 p-3 rounded-full mb-4 transition-all w-full sm:w-auto
                 ${theme === 'dark' 
                   ? 'bg-green-600 hover:bg-green-500' 
                   : 'bg-green-500 hover:bg-green-600'} 
                 text-white
               `}
             >
-              <Upload size={20} /> <span>Upload Documents</span>
+              <Upload size={20} className="flex-shrink-0" /> 
+              <span className="truncate">Upload Documents</span>
             </button>
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[calc(100vh-24rem)] sm:max-h-[24rem] overflow-y-auto">
               {documents.map(doc => (
                 <div 
                   key={doc.id} 
@@ -167,11 +172,11 @@ const Profile = () => {
                       : 'bg-white shadow-sm hover:shadow-md'}
                   `}
                 >
-                  {doc.name}
+                  <p className="truncate">{doc.name}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-4 flex space-x-2">
+            <div className="mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
               <input 
                 type="text" 
                 ref={linkInputRef}
@@ -182,11 +187,12 @@ const Profile = () => {
                     ? 'bg-gray-700 text-white focus:ring-2 focus:ring-purple-500' 
                     : 'bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-purple-300'}
                 `}
+                onKeyPress={(e) => e.key === 'Enter' && addWebsiteLink()}
               />
               <button 
                 onClick={addWebsiteLink}
                 className={`
-                  p-3 rounded-full transition-all
+                  p-3 rounded-full transition-all flex-shrink-0
                   ${theme === 'dark' 
                     ? 'bg-purple-600 hover:bg-purple-500' 
                     : 'bg-purple-500 hover:bg-purple-600'} 
@@ -196,7 +202,7 @@ const Profile = () => {
                 <LinkIcon size={20} />
               </button>
             </div>
-            <div className="mt-4 space-y-3">
+            <div className="mt-4 space-y-3 max-h-48 overflow-y-auto">
               {websiteLinks.map(link => (
                 <div 
                   key={link.id} 
@@ -207,7 +213,7 @@ const Profile = () => {
                       : 'bg-white shadow-sm hover:shadow-md'}
                   `}
                 >
-                  {link.url}
+                  <p className="truncate">{link.url}</p>
                 </div>
               ))}
             </div>
@@ -221,7 +227,7 @@ const Profile = () => {
               ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white' 
               : 'bg-gradient-to-br from-purple-50 to-purple-100 text-gray-800'}
           `}>
-            <div className="flex items-center justify-between mb-4 p-3 rounded-xl">
+            <div className="flex items-center justify-between mb-4 p-3 rounded-xl flex-wrap gap-2">
               <span className="font-medium">Dark Mode</span>
               <button 
                 onClick={toggleTheme}
@@ -268,12 +274,28 @@ const Profile = () => {
 
   return (
     <div className={`
-      min-h-screen 
+      min-h-screen w-full
       ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}
       transition-colors duration-300
     `}>
-      <div className="max-w-4xl mx-auto">
-        <div className="flex border-b">
+      <div className="max-w-4xl mx-auto p-4">
+        {/* Mobile Menu Button */}
+        <div className="sm:hidden flex justify-end mb-4">
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={`p-2 rounded-lg ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className={`
+          sm:flex border-b
+          ${isMobileMenuOpen ? 'flex' : 'hidden'}
+          ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}
+          flex-col sm:flex-row
+        `}>
           {[
             { label: 'Chat', value: 'chat', icon: MessageCircle },
             { label: 'Knowledge Base', value: 'knowledge', icon: BookOpen },
@@ -283,7 +305,10 @@ const Profile = () => {
             return (
               <button
                 key={tab.value}
-                onClick={() => setActiveTab(tab.value)}
+                onClick={() => {
+                  setActiveTab(tab.value);
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`
                   flex-grow p-4 transition-all flex items-center justify-center space-x-2
                   ${activeTab === tab.value 
@@ -296,12 +321,16 @@ const Profile = () => {
                 `}
               >
                 <Icon size={20} />
-                <span className="hidden md:inline">{tab.label}</span>
+                <span className="inline">{tab.label}</span>
               </button>
             );
           })}
         </div>
-        {renderContent()}
+
+        {/* Main Content */}
+        <div className="mt-4">
+          {renderContent()}
+        </div>
       </div>
     </div>
   );
